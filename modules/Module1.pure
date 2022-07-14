@@ -1,0 +1,5 @@
+module Module1
+
+const x : Numeric = 1 + 1
+
+function main : World -> Unit = println "Hello, world."

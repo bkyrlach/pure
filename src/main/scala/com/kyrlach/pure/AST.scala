@@ -6,7 +6,7 @@ import com.kyrlach.pure.typechecker._
 object AST {
   sealed trait Import
 
-  case class Module(imports: List[Import], declarations: List[Declaration])
+  case class Module(name: String, imports: List[Import], declarations: List[Declaration])
 
   sealed trait Value
 

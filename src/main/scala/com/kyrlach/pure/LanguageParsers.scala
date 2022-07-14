@@ -17,6 +17,8 @@ object LanguageParsers {
   val ws0: Parser0[Unit] = Rfc5234.wsp.rep0.as(())
   val ws1: Parser[Unit] = Rfc5234.wsp.rep.as(())
 
+  val withNewLines: Parser[Unit] = ws0.with1 *> Parser.char('\n')
+
   val name: Parser[String] = (alpha ~ (alpha | digit).rep0).map {
     case (first, rest) => (first :: rest)
   }.string
@@ -92,6 +94,13 @@ object LanguageParsers {
     value <- expression
   } yield AST.Declaration.Constant(declared._1, declared._2, value)
 
-  val declarations: Parser0[List[AST.Declaration]] = (declareConstant).rep0
+  val declarations: Parser[AST.Declaration] = declareConstant
 
+  val module: Parser0[AST.Module] = for {
+    _     <- Parser.string("module")
+    _     <- ws1
+    mname <- name
+    _     <- withNewLines.rep0
+    decs  <- declarations.repSep0(withNewLines.rep)
+  } yield AST.Module(mname, Nil, decs)
 }
